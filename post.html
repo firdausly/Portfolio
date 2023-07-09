@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <form id="form" method="post">
+        <input type="text", id="label" placeholder="Label"/></br>
+        <input type="text", id="notes" placeholder="Notes"/></br>
+        <input type="submit" value="Add"/>
+        <!-- <button id="submit">Submit</button> -->
+     </form> 
+
+<script>
+
+var form=document.getElementById('form');
+form.addEventListener('submit',submitForm);
+
+function submitForm(event){
+event.preventDefault();
+var label=document.getElementById('label').value;
+var note=document.getElementById('notes').value;
+var jsonBody = JSON.stringify({
+    label:label,
+    notes:note,});
+
+fetch('https://script.google.com/macros/s/AKfycbwmnP1tYm5gMhT-auLda2YOHuLORYGhjHe0YMM9S_ajNXcQSyV6R5E4zWO83VpHTQPi/exec', {
+  method: 'POST',
+  mode:"no-cors",
+  body: jsonBody,
+  headers: {
+    'Content-type': 'application/json; charset=UTF-8',
+  }
+  });
+}
+</script>
+
+</body>
+</html>
