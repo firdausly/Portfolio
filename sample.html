@@ -4,12 +4,15 @@
 
 <h1>JavaScript Fetch API</h1>
 <h2>The fetch() Method</h2>
- <input type="text" id="label" name="label" ><br><br>
+ <input type="text" id="label" name="label" >
+ <button id="refresh">Refresh</button><br>
  <p id="demo">Output Here</p>
 <script>
 let file = "https://script.google.com/macros/s/AKfycbyTSdOnFYEgYDOXH3XzVr2oRsjzlGhDALPt6QteQEPgVY50Hj8ogBDxmKsPS-1FvVjM/exec?label=";
 const labelDom=document.getElementById("label");
 const demoDom=document.getElementById("demo");
+const refreshButtonDom=document.getElementById("refresh");
+refreshButtonDom.addEventListener("click",myfunction);
 labelDom.addEventListener("input", myfunction);
 function myfunction(){
 var output=file+labelDom.value;
