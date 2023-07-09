@@ -10,7 +10,7 @@
 let file = "https://script.google.com/macros/s/AKfycbyTSdOnFYEgYDOXH3XzVr2oRsjzlGhDALPt6QteQEPgVY50Hj8ogBDxmKsPS-1FvVjM/exec?label=";
 const labelDom=document.getElementById("label");
 const demoDom=document.getElementById("demo");
-labelDom.addEventListener("change", myfunction);
+labelDom.addEventListener("input", myfunction);
 function myfunction(){
 var output=file+labelDom.value;
 var obj;
