@@ -13,7 +13,7 @@ const labelDom=document.getElementById("label");
 const demoDom=document.getElementById("demo");
 const refreshButtonDom=document.getElementById("refresh");
 refreshButtonDom.addEventListener("click",myfunction);
-labelDom.addEventListener("input", myfunction);
+labelDom.addEventListener("change", myfunction);
 function myfunction(){
 var output=file+labelDom.value;
 var obj;
