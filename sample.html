@@ -1,83 +1,122 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-               <!--Import Google Icon Font-->
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-      <!-- Compiled and minified CSS -->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
- <!--Let browser know website is optimized for mobile-->
- <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!--Import Google Icon Font-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 </head>
+
 <body>
 
-<h1>Simple Notes</h1>
- <label for="query">Enter Label to Query</label>
- <input type="text" id="query" name="query" placeholder="Enter Label to Query" >
- <button class="btn waves-effect waves-light" id="refresh">Refresh</button><br>
- <ul class="collection" id="demo">
+  <h3>Simple Notes</h3>
+  <label for="query">Enter Label to Query</label>
+  <input type="text" id="query" name="query" placeholder="Enter Label to Query">
+  <button class="btn waves-effect waves-light" id="refresh">Refresh</button><br>
+  <ul class="collection" id="demo">
   </ul>
 
-<h1>Add Notes</h1>
-<form id="form" method="post">
+  <h3>Add Notes</h3>
+  <form id="form" method="post">
     <label for="label">Label</label>
-    <input type="text", id="label" placeholder="Label"/></br>
+    <input type="text" , id="label" placeholder="Label" /></br>
     <label for="notes">Notes</label>
-    <input type="text", id="notes" placeholder="Notes"/></br>
+    <input type="text" , id="notes" placeholder="Notes" /></br>
     <button class="btn waves-effect waves-light" type="submit" name="action">Submit
-        <i class="material-icons right">send</i>
-      </button>
- </form> 
-<script>
-let file = "https://script.google.com/macros/s/AKfycbyTSdOnFYEgYDOXH3XzVr2oRsjzlGhDALPt6QteQEPgVY50Hj8ogBDxmKsPS-1FvVjM/exec?label=";
-const labelDom=document.getElementById("query");
-const demoDom=document.getElementById("demo");
-const refreshButtonDom=document.getElementById("refresh");
-refreshButtonDom.addEventListener("click",myfunction);
-labelDom.addEventListener("change", myfunction);
-function myfunction(){
-var output=file+labelDom.value;
-var obj;
-fetch (output)
-.then(x => x.json())
-.then(y => obj=y.data)
-.then(()=> {
-    demoDom.innerHTML="";
-    for (var data of obj){
-        demoDom.innerHTML+="<li class='collection-item'><i class='tiny material-icons'>send </i> "+data.note+"</li>";
+      <i class="material-icons right">send</i>
+    </button>
+  </form>
+  <h3>All Notes</h3>
+  <h6>Click on label to expend notes</h6>
+  <ul class="collapsible" id="labelToPut">
+  </ul>
+
+  <script>
+    let file = "https://script.google.com/macros/s/AKfycbyTSdOnFYEgYDOXH3XzVr2oRsjzlGhDALPt6QteQEPgVY50Hj8ogBDxmKsPS-1FvVjM/exec";
+    const labelDom = document.getElementById("query");
+    const demoDom = document.getElementById("demo");
+    const refreshButtonDom = document.getElementById("refresh");
+    refreshButtonDom.addEventListener("click", myfunction);
+    labelDom.addEventListener("change", myfunction);
+    function myfunction() {
+      var output = file +"?label="+ labelDom.value;
+      var obj;
+      fetch(output)
+        .then(x => x.json())
+        .then(y => obj = y.data)
+        .then(() => {
+          demoDom.innerHTML = "";
+          for (var data of obj) {
+            demoDom.innerHTML += "<li class='collection-item'><i class='tiny material-icons'>send </i> " + data.note + "</li>";
+          }
+        });
+        showAll();
     }
-});
-}
+  
+
+    showAll();
+    async function showAll(){
+      const labelCollapsibleDom=document.getElementById("labelToPut");
+      labelCollapsibleDom.innerHTML="";//reset Dom
+      var res=await fetch(file);
+      var jsonres= await res.json();
+      var uniqueLabel=[...new Set(jsonres.list.map(res=> res.label))];
+      uniqueLabel.forEach(label=>{
+        const uniqId=label+Date.now();
+        labelCollapsibleDom.innerHTML+='<li id="'+uniqId+'"><div class="collapsible-header blue-text">'+label+'</div></li>';
+        var jsonresFilterByLabel = jsonres.list.filter(res=>res.label==label).map(obj=>obj.note);
+        const uniqueLabelDom=document.getElementById(uniqId);
+        jsonresFilterByLabel.forEach(note=>{
+          uniqueLabelDom.innerHTML+='<div class="collapsible-body"><span>'+note+'</span></div>';
+        });
+
+      });
+      
+    }
 
 
-var form=document.getElementById('form');
-form.addEventListener('submit',submitForm);
 
-function submitForm(event){
-event.preventDefault();
-var label=document.getElementById('label').value;
-var note=document.getElementById('notes').value;
-var jsonBody = JSON.stringify({
-    label:label,
-    notes:note,});
+    var form = document.getElementById('form');
+    form.addEventListener('submit', submitForm);
 
-fetch('https://script.google.com/macros/s/AKfycbwmnP1tYm5gMhT-auLda2YOHuLORYGhjHe0YMM9S_ajNXcQSyV6R5E4zWO83VpHTQPi/exec', {
-  method: 'POST',
-  mode:"no-cors",
-  body: jsonBody,
-  headers: {
-    'Content-type': 'application/json; charset=UTF-8',
-  }
-  }).then(()=>{
-    labelDom.value=label;
-    alert("Done awak..");
-    refreshButtonDom.click();
-    
+    function submitForm(event) {
+      event.preventDefault();
+      var label = document.getElementById('label').value;
+      var note = document.getElementById('notes').value;
+      var jsonBody = JSON.stringify({
+        label: label,
+        notes: note,
+      });
 
-  });
-}
-</script>
-      <!-- Compiled and minified JavaScript -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+      fetch('https://script.google.com/macros/s/AKfycbwmnP1tYm5gMhT-auLda2YOHuLORYGhjHe0YMM9S_ajNXcQSyV6R5E4zWO83VpHTQPi/exec', {
+        method: 'POST',
+        mode: "no-cors",
+        body: jsonBody,
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        }
+      }).then(() => {
+        labelDom.value = label;
+        alert("Done awak..");
+        refreshButtonDom.click();
+
+
+      });
+    }
+
+
+  </script>
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var elems = document.querySelectorAll('.collapsible');
+      var instances = M.Collapsible.init(elems);
+    });
+  </script>
 </body>
 </html>
